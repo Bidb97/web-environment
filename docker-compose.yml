@@ -1,0 +1,37 @@
+version: "3.8"
+services:
+  app:
+    container_name: "${APP_NAME}"
+    user: 1000:1000
+    build:
+      context: .
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - "nginx"
+      - "mysql"
+    restart: always
+  nginx:
+    container_name: "nginx"
+    image: nginx:1.23.4-alpine
+    volumes:
+      - ./:/var/www
+      - ./Docker/nginx/conf.d:/etc/nginx/conf.d
+    ports:
+      - "0:80"
+    restart: always
+  mysql:
+    container_name: "mysql"
+    image: mysql:8.0.33
+    volumes:
+      - ./Docker/tmp:/var/lib/mysql
+      - ./Docker/mysql/conf.d:/etc/mysql/conf.d
+    ports:
+      - "0:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${DB_DATABASE}"
+      restart: always
+
+
+
